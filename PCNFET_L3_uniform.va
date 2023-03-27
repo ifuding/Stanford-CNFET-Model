@@ -1,0 +1,113 @@
+/*******************************************************************
+ Carbon Nanotube Field Effect Transistors
+             VerilogA Models
+	       Version 2.1.1 
+
+   
+   Copyright The Board Trustees of the Leland Stanford Junior University 2007
+   Albert Lin, Gordon Wan, Jie Deng, Prof. H-S Philip Wong
+
+
+   02/02/2008 Last Modified by Albert Lin.
+
+   Carbon Nanotube Field Effect Transistors Verilog-A implementation
+   based on 
+   "A Circuit-Compatible SPICE model for Enhancement Mode Carbon 
+   Nanotube Field Effect Transistors" by Jie Deng and H-S Philip Wong 
+
+   Patent Pending.
+   
+   Model name: PCNFET_uniform.va
+*******************************************************************/
+
+/*******************************************************************
+* TERMS OF USE
+* Stanford Leland Junior University and the authors ("Stanford") 
+* provide these model files to you subject to the Terms of Use, 
+* which may be updated by us from time to time without notice to you.
+* The most up-to-date Terms of Use can be found at
+* http://www.stanford.edu/group/nanoelectronics/model_downloads.htm
+*******************************************************************/
+
+/*******************************************************************
+* Uniform-tubes Version: This model file simplifies charge screening 
+* effects among multiple tubes within the same FET device by treating
+* all tubes uniformly.
+*
+* Set CNTPos=0 to treat all tubes as middle tubes, i.e. with
+* two-sided screening effects.
+* Set CNTPos=1 to treat all tubes as edge tubes, i.e. with one-sided
+* screening effects. 
+*******************************************************************/
+/*******************************************************************
+*
+* P-CNFET Level 3 Sub-circuit Definition
+* (Top Level Uniform-tubes Version)
+*******************************************************************/
+`include "disciplines.vams"
+`include "PCNFET_L2.va"
+
+module PCNFET_uniform(Drain,Gate,Source,Sub);
+    
+	// Input variables definitions
+    	parameter real Lch=`L_channel;
+    	parameter real Lgeff = `Lceff;
+    	parameter real Lss=`L_sd;
+    	parameter real Ldd=`L_sd;
+    	parameter real Efi=`Efo;
+    	parameter real Kgate=`Kox;
+    	parameter real Tox=4.0e-9;
+    	parameter real Csub=20.0e-12;
+    	parameter real Ccsd=`Ccsd;
+    	parameter real CoupleRatio=`CoupleRatio;
+    	parameter real Vfbp=0.0;
+    	parameter real Dout=1.0;
+    	parameter real Sout=0.0;
+	parameter real Pitch=20.0e-9;
+    	parameter real Wgate=`sub_pitch;
+    	parameter real CNTPos=1.0;
+    	parameter real n1=19;
+    	parameter real n2=0;
+	parameter real tubes=1.0;
+    
+    	// Electrical connections
+    	inout Drain, Gate, Source, Sub;
+    	electrical Drain, Gate, Source, Sub;
+	electrical int_Drain, int_Gate, int_Source; //For XPCNFET_L2
+
+	/***********************************************************
+     	*** Component values to be computed heavily ****************
+     	***********************************************************/
+	real Cgpar;   	
+
+	//HSPICE uses the 'm' parameter.
+	//Here, probes are used along with CCCS to multiply all currents.
+
+	//Model tubes: probe the currents going into 1 instance
+	branch (Drain, int_Drain) probe_drain;
+	branch (Gate, int_Gate) probe_gate;	
+	branch (Source, int_Source) probe_source;
+
+	// Instantiate the PCNFET_L2 model
+    	PCNFET_L2 #(.Lch(Lch),.Lgeff(Lgeff),.Lss(Lss),.Ldd(Ldd),.Efi(Efi),.Kgate(Kgate),.Tox(Tox),.Csub(Csub),.Ccsd(Ccsd),.CoupleRatio(CoupleRatio),.Vfbp(Vfbp),.Dout(Dout),.Sout(Sout),.GF(min(Wgate/1.0e-12,1.0)),.Pitch(Pitch),.CNTPos(CNTPos),.n1(n1),.n2(n2)) XPCNFET_L2(int_Drain, int_Gate, int_Source, Sub, int_Drain);
+
+
+	analog begin
+
+		begin // Assign basic parameter
+			Cgpar = `Ctot*Wgate;	
+		end
+
+	        //model the other (tubes-1) tubes
+	        I(Drain, Sub)	<+	(tubes-1)*I(probe_drain);
+	        I(Gate, Sub)	<+	(tubes-1)*I(probe_gate);
+	        I(Source, Sub)	<+	(tubes-1)*I(probe_source);
+	        //By KCL, the current on node Sub is also scaled automatically
+
+		// Placing component
+        	// Capacitors
+         	I(Gate,Sub)        <+ ddt(Cgpar*V(Gate,Sub));
+
+    	end // End: analog begin
+endmodule
+         
