@@ -156,6 +156,41 @@ module NCNFET_L1(Drain, Gate, Source, Sub, CoupleNode);
 	real Vg_to_phib;
 	real charge_vds;
 
+	// optimize intermediate variables
+	real hsppow_K1_2;
+	real hsppow_K2_2;
+	real exp_negvds_kt;
+	real exp_offset_vds_kT;
+	real exp_offset_kT;
+	real hsppow_Kp1_2;
+	real hsppow_Kp2_2;
+	real hsppow_Kp3_2;
+	real hsppow_Kp4_2;
+	real hsppow_Kp5_2;
+	real hsppow_Kp6_2;
+	real hsppow_Kp7_2;
+	real hsppow_Kp8_2;
+	real hsppow_Kp9_2;
+	real exp_E11_delta_phib_kT;
+	real exp_E12_delta_phib_kT;
+	real exp_E13_delta_phib_kT;
+	real exp_E14_delta_phib_kT;
+	real exp_E15_delta_phib_kT;
+	real exp_E16_delta_phib_kT;
+	real exp_E17_delta_phib_kT;
+	real exp_E18_delta_phib_kT;
+	real exp_E19_delta_phib_kT;
+	real exp_E21_delta_phib_kT;
+	real exp_E22_delta_phib_kT;
+	real exp_E23_delta_phib_kT;
+	real exp_E24_delta_phib_kT;
+	real exp_E25_delta_phib_kT;
+	real exp_E26_delta_phib_kT;
+	real exp_E27_delta_phib_kT;
+	real exp_E28_delta_phib_kT;
+	real exp_E29_delta_phib_kT;
+	real hsppow_E1_2;
+	real hsppow_E2_2;
 
    	analog function real sgn;
         	input x;
@@ -243,6 +278,8 @@ module NCNFET_L1(Drain, Gate, Source, Sub, CoupleNode);
 
 			K1 = 2*`pi/(3*`a*hspsqrt(hsppow(n1,2)+n1*n2+hsppow(n2,2)));
 			K2 = 2*K1;
+			hsppow_K1_2 = hsppow(K1,2);
+			hsppow_K2_2 = hsppow(K2,2);
 
 			Kp1=2*`pi/Lgate;
 			Kp2=2*Kp1;
@@ -253,30 +290,39 @@ module NCNFET_L1(Drain, Gate, Source, Sub, CoupleNode);
 			Kp7=7*Kp1;
 			Kp8=8*Kp1;
 			Kp9=9*Kp1;
+			hsppow_Kp1_2 = hsppow(Kp1,2);
+			hsppow_Kp2_2 = 4 * hsppow_Kp1_2;
+			hsppow_Kp3_2 = 9 * hsppow_Kp1_2;
+			hsppow_Kp4_2 = 16 * hsppow_Kp1_2;
+			hsppow_Kp5_2 = 25 * hsppow_Kp1_2;
+			hsppow_Kp6_2 = 36 * hsppow_Kp1_2;
+			hsppow_Kp7_2 = 49 * hsppow_Kp1_2;
+			hsppow_Kp8_2 = 64 * hsppow_Kp1_2;
+			hsppow_Kp9_2 = 81 * hsppow_Kp1_2;
 
 			E1 = `Vpi*`pi/hspsqrt(3.0*(hsppow(n1,2)+n1*n2+hsppow(n2,2)));
 			E2 = 2*E1;
 
 			CoeffE = hspsqrt(3.0)/2.0*`a*`Vpi;
-			E11 = CoeffE*hspsqrt(hsppow(K1,2)+hsppow(Kp1,2));
-			E12 = CoeffE*hspsqrt(hsppow(K1,2)+hsppow(Kp2,2));	
-			E13 = CoeffE*hspsqrt(hsppow(K1,2)+hsppow(Kp3,2));
-			E14 = CoeffE*hspsqrt(hsppow(K1,2)+hsppow(Kp4,2));
-			E15 = CoeffE*hspsqrt(hsppow(K1,2)+hsppow(Kp5,2));
-			E16 = CoeffE*hspsqrt(hsppow(K1,2)+hsppow(Kp6,2));
-			E17 = CoeffE*hspsqrt(hsppow(K1,2)+hsppow(Kp7,2));
-			E18 = CoeffE*hspsqrt(hsppow(K1,2)+hsppow(Kp8,2));
-			E19 = CoeffE*hspsqrt(hsppow(K1,2)+hsppow(Kp9,2));
+			E11 = CoeffE*hspsqrt(hsppow_K1_2+hsppow_Kp1_2);
+			E12 = CoeffE*hspsqrt(hsppow_K1_2+hsppow_Kp2_2);	
+			E13 = CoeffE*hspsqrt(hsppow_K1_2+hsppow_Kp3_2);
+			E14 = CoeffE*hspsqrt(hsppow_K1_2+hsppow_Kp4_2);
+			E15 = CoeffE*hspsqrt(hsppow_K1_2+hsppow_Kp5_2);
+			E16 = CoeffE*hspsqrt(hsppow_K1_2+hsppow_Kp6_2);
+			E17 = CoeffE*hspsqrt(hsppow_K1_2+hsppow_Kp7_2);
+			E18 = CoeffE*hspsqrt(hsppow_K1_2+hsppow_Kp8_2);
+			E19 = CoeffE*hspsqrt(hsppow_K1_2+hsppow_Kp9_2);
 			
-			E21 = CoeffE*hspsqrt(hsppow(K2,2)+hsppow(Kp1,2));
-			E22 = CoeffE*hspsqrt(hsppow(K2,2)+hsppow(Kp2,2));
-			E23 = CoeffE*hspsqrt(hsppow(K2,2)+hsppow(Kp3,2));
-			E24 = CoeffE*hspsqrt(hsppow(K2,2)+hsppow(Kp4,2));
-			E25 = CoeffE*hspsqrt(hsppow(K2,2)+hsppow(Kp5,2));
-			E26 = CoeffE*hspsqrt(hsppow(K2,2)+hsppow(Kp6,2));
-			E27 = CoeffE*hspsqrt(hsppow(K2,2)+hsppow(Kp7,2));
-			E28 = CoeffE*hspsqrt(hsppow(K2,2)+hsppow(Kp8,2));
-			E29 = CoeffE*hspsqrt(hsppow(K2,2)+hsppow(Kp9,2));
+			E21 = CoeffE*hspsqrt(hsppow_K2_2+hsppow_Kp1_2);
+			E22 = CoeffE*hspsqrt(hsppow_K2_2+hsppow_Kp2_2);
+			E23 = CoeffE*hspsqrt(hsppow_K2_2+hsppow_Kp3_2);
+			E24 = CoeffE*hspsqrt(hsppow_K2_2+hsppow_Kp4_2);
+			E25 = CoeffE*hspsqrt(hsppow_K2_2+hsppow_Kp5_2);
+			E26 = CoeffE*hspsqrt(hsppow_K2_2+hsppow_Kp6_2);
+			E27 = CoeffE*hspsqrt(hsppow_K2_2+hsppow_Kp7_2);
+			E28 = CoeffE*hspsqrt(hsppow_K2_2+hsppow_Kp8_2);
+			E29 = CoeffE*hspsqrt(hsppow_K2_2+hsppow_Kp9_2);
 
 			En11 = E11 - E1;
 			En12 = E12 - E1;
@@ -299,25 +345,25 @@ module NCNFET_L1(Drain, Gate, Source, Sub, CoupleNode);
 			En29 = E29 - E2;
 
 			CocoJ = hspsqrt(3.0)*`a*`pi*`Vpi;
-			Coeff_J11 = Kp1/hspsqrt(hsppow(K1,2)+hsppow(Kp1,2));
-			Coeff_J12 = Kp2/hspsqrt(hsppow(K1,2)+hsppow(Kp2,2));
-			Coeff_J13 = Kp3/hspsqrt(hsppow(K1,2)+hsppow(Kp3,2));
-			Coeff_J14 = Kp4/hspsqrt(hsppow(K1,2)+hsppow(Kp4,2));
-			Coeff_J15 = Kp5/hspsqrt(hsppow(K1,2)+hsppow(Kp5,2));
-			Coeff_J16 = Kp6/hspsqrt(hsppow(K1,2)+hsppow(Kp6,2));
-			Coeff_J17 = Kp7/hspsqrt(hsppow(K1,2)+hsppow(Kp7,2));
-			Coeff_J18 = Kp8/hspsqrt(hsppow(K1,2)+hsppow(Kp8,2));
-			Coeff_J19 = Kp9/hspsqrt(hsppow(K1,2)+hsppow(Kp9,2));
+			Coeff_J11 = Kp1/hspsqrt(hsppow_K1_2+hsppow_Kp1_2);
+			Coeff_J12 = Kp2/hspsqrt(hsppow_K1_2+hsppow_Kp2_2);
+			Coeff_J13 = Kp3/hspsqrt(hsppow_K1_2+hsppow_Kp3_2);
+			Coeff_J14 = Kp4/hspsqrt(hsppow_K1_2+hsppow_Kp4_2);
+			Coeff_J15 = Kp5/hspsqrt(hsppow_K1_2+hsppow_Kp5_2);
+			Coeff_J16 = Kp6/hspsqrt(hsppow_K1_2+hsppow_Kp6_2);
+			Coeff_J17 = Kp7/hspsqrt(hsppow_K1_2+hsppow_Kp7_2);
+			Coeff_J18 = Kp8/hspsqrt(hsppow_K1_2+hsppow_Kp8_2);
+			Coeff_J19 = Kp9/hspsqrt(hsppow_K1_2+hsppow_Kp9_2);
 
-			Coeff_J21 = Kp1/hspsqrt(hsppow(K2,2)+hsppow(Kp1,2));
-			Coeff_J22 = Kp2/hspsqrt(hsppow(K2,2)+hsppow(Kp2,2));
-			Coeff_J23 = Kp3/hspsqrt(hsppow(K2,2)+hsppow(Kp3,2));
-			Coeff_J24 = Kp4/hspsqrt(hsppow(K2,2)+hsppow(Kp4,2));
-			Coeff_J25 = Kp5/hspsqrt(hsppow(K2,2)+hsppow(Kp5,2));
-			Coeff_J26 = Kp6/hspsqrt(hsppow(K2,2)+hsppow(Kp6,2));
-			Coeff_J27 = Kp7/hspsqrt(hsppow(K2,2)+hsppow(Kp7,2));
-			Coeff_J28 = Kp8/hspsqrt(hsppow(K2,2)+hsppow(Kp8,2));
-			Coeff_J29 = Kp9/hspsqrt(hsppow(K2,2)+hsppow(Kp9,2));
+			Coeff_J21 = Kp1/hspsqrt(hsppow_K2_2+hsppow_Kp1_2);
+			Coeff_J22 = Kp2/hspsqrt(hsppow_K2_2+hsppow_Kp2_2);
+			Coeff_J23 = Kp3/hspsqrt(hsppow_K2_2+hsppow_Kp3_2);
+			Coeff_J24 = Kp4/hspsqrt(hsppow_K2_2+hsppow_Kp4_2);
+			Coeff_J25 = Kp5/hspsqrt(hsppow_K2_2+hsppow_Kp5_2);
+			Coeff_J26 = Kp6/hspsqrt(hsppow_K2_2+hsppow_Kp6_2);
+			Coeff_J27 = Kp7/hspsqrt(hsppow_K2_2+hsppow_Kp7_2);
+			Coeff_J28 = Kp8/hspsqrt(hsppow_K2_2+hsppow_Kp8_2);
+			Coeff_J29 = Kp9/hspsqrt(hsppow_K2_2+hsppow_Kp9_2);
 			
 			meff1 = 2*`h_ba*`h_ba*K1/(hspsqrt(3.0)*`a*`q*`Vpi)/1.0e40;
 			meff2 = 2*`h_ba*`h_ba*K2/(hspsqrt(3.0)*`a*`q*`Vpi)/1.0e40;
@@ -379,88 +425,111 @@ module NCNFET_L1(Drain, Gate, Source, Sub, CoupleNode);
 			offset = `photon;			
 
 			// Evalute fermi_sxx and fermi_dxx
-			fermi_s11 = 1.0/(1.0+exp((E11-delta_phib)/`kT));
-			fermi_s12 = 1.0/(1.0+exp((E12-delta_phib)/`kT));
-			fermi_s13 = 1.0/(1.0+exp((E13-delta_phib)/`kT));
-			fermi_s14 = 1.0/(1.0+exp((E14-delta_phib)/`kT));
-			fermi_s15 = 1.0/(1.0+exp((E15-delta_phib)/`kT));
-			fermi_s16 = 1.0/(1.0+exp((E16-delta_phib)/`kT));
-			fermi_s17 = 1.0/(1.0+exp((E17-delta_phib)/`kT));
-			fermi_s18 = 1.0/(1.0+exp((E18-delta_phib)/`kT));
-			fermi_s19 = 1.0/(1.0+exp((E19-delta_phib)/`kT));
+			exp_E11_delta_phib_kT = exp((E11-delta_phib)/`kT);
+			exp_E12_delta_phib_kT = exp((E12-delta_phib)/`kT);
+			exp_E13_delta_phib_kT = exp((E13-delta_phib)/`kT);
+			exp_E14_delta_phib_kT = exp((E14-delta_phib)/`kT);
+			exp_E15_delta_phib_kT = exp((E15-delta_phib)/`kT);
+			exp_E16_delta_phib_kT = exp((E16-delta_phib)/`kT);
+			exp_E17_delta_phib_kT = exp((E17-delta_phib)/`kT);
+			exp_E18_delta_phib_kT = exp((E18-delta_phib)/`kT);
+			exp_E19_delta_phib_kT = exp((E19-delta_phib)/`kT);
+			exp_E21_delta_phib_kT = exp((E21-delta_phib)/`kT);
+			exp_E22_delta_phib_kT = exp((E22-delta_phib)/`kT);
+			exp_E23_delta_phib_kT = exp((E23-delta_phib)/`kT);
+			exp_E24_delta_phib_kT = exp((E24-delta_phib)/`kT);
+			exp_E25_delta_phib_kT = exp((E25-delta_phib)/`kT);
+			exp_E26_delta_phib_kT = exp((E26-delta_phib)/`kT);
+			exp_E27_delta_phib_kT = exp((E27-delta_phib)/`kT);
+			exp_E28_delta_phib_kT = exp((E28-delta_phib)/`kT);
+			exp_E29_delta_phib_kT = exp((E29-delta_phib)/`kT);
+
+			fermi_s11 = 1.0/(1.0+exp_E11_delta_phib_kT);
+			fermi_s12 = 1.0/(1.0+exp_E12_delta_phib_kT);
+			fermi_s13 = 1.0/(1.0+exp_E13_delta_phib_kT);
+			fermi_s14 = 1.0/(1.0+exp_E14_delta_phib_kT);
+			fermi_s15 = 1.0/(1.0+exp_E15_delta_phib_kT);
+			fermi_s16 = 1.0/(1.0+exp_E16_delta_phib_kT);
+			fermi_s17 = 1.0/(1.0+exp_E17_delta_phib_kT);
+			fermi_s18 = 1.0/(1.0+exp_E18_delta_phib_kT);
+			fermi_s19 = 1.0/(1.0+exp_E19_delta_phib_kT);
 			
-			fermi_s21 = 1.0/(1.0+exp((E21-delta_phib)/`kT));
-			fermi_s22 = 1.0/(1.0+exp((E22-delta_phib)/`kT));
-			fermi_s23 = 1.0/(1.0+exp((E23-delta_phib)/`kT));
-			fermi_s24 = 1.0/(1.0+exp((E24-delta_phib)/`kT));
-			fermi_s25 = 1.0/(1.0+exp((E25-delta_phib)/`kT));
-			fermi_s26 = 1.0/(1.0+exp((E26-delta_phib)/`kT));
-			fermi_s27 = 1.0/(1.0+exp((E27-delta_phib)/`kT));
-			fermi_s28 = 1.0/(1.0+exp((E28-delta_phib)/`kT));
-			fermi_s29 = 1.0/(1.0+exp((E29-delta_phib)/`kT));
+			fermi_s21 = 1.0/(1.0+exp_E21_delta_phib_kT);
+			fermi_s22 = 1.0/(1.0+exp_E22_delta_phib_kT);
+			fermi_s23 = 1.0/(1.0+exp_E23_delta_phib_kT);
+			fermi_s24 = 1.0/(1.0+exp_E24_delta_phib_kT);
+			fermi_s25 = 1.0/(1.0+exp_E25_delta_phib_kT);
+			fermi_s26 = 1.0/(1.0+exp_E26_delta_phib_kT);
+			fermi_s27 = 1.0/(1.0+exp_E27_delta_phib_kT);
+			fermi_s28 = 1.0/(1.0+exp_E28_delta_phib_kT);
+			fermi_s29 = 1.0/(1.0+exp_E29_delta_phib_kT);
 
-			fermi_d11 = exp(-vds/`kT)/(exp(-vds/`kT)+exp((E11-delta_phib)/`kT));
-			fermi_d12 = exp(-vds/`kT)/(exp(-vds/`kT)+exp((E12-delta_phib)/`kT));
-			fermi_d13 = exp(-vds/`kT)/(exp(-vds/`kT)+exp((E13-delta_phib)/`kT));
-			fermi_d14 = exp(-vds/`kT)/(exp(-vds/`kT)+exp((E14-delta_phib)/`kT));
-			fermi_d15 = exp(-vds/`kT)/(exp(-vds/`kT)+exp((E15-delta_phib)/`kT));
-			fermi_d16 = exp(-vds/`kT)/(exp(-vds/`kT)+exp((E16-delta_phib)/`kT));
-			fermi_d17 = exp(-vds/`kT)/(exp(-vds/`kT)+exp((E17-delta_phib)/`kT));
-			fermi_d18 = exp(-vds/`kT)/(exp(-vds/`kT)+exp((E18-delta_phib)/`kT));
-			fermi_d19 = exp(-vds/`kT)/(exp(-vds/`kT)+exp((E19-delta_phib)/`kT));
+			exp_negvds_kt = exp(-vds/`kT;
+			fermi_d11 = exp_negvds_kt/(exp_negvds_kt+exp_E11_delta_phib_kT);
+			fermi_d12 = exp_negvds_kt/(exp_negvds_kt+exp_E12_delta_phib_kT);
+			fermi_d13 = exp_negvds_kt/(exp_negvds_kt+exp_E13_delta_phib_kT);
+			fermi_d14 = exp_negvds_kt/(exp_negvds_kt+exp_E14_delta_phib_kT);
+			fermi_d15 = exp_negvds_kt/(exp_negvds_kt+exp_E15_delta_phib_kT);
+			fermi_d16 = exp_negvds_kt/(exp_negvds_kt+exp_E16_delta_phib_kT);
+			fermi_d17 = exp_negvds_kt/(exp_negvds_kt+exp_E17_delta_phib_kT);
+			fermi_d18 = exp_negvds_kt/(exp_negvds_kt+exp_E18_delta_phib_kT);
+			fermi_d19 = exp_negvds_kt/(exp_negvds_kt+exp_E19_delta_phib_kT);
 
-			fermi_d21 = exp(-vds/`kT)/(exp(-vds/`kT)+exp((E21-delta_phib)/`kT));
-			fermi_d22 = exp(-vds/`kT)/(exp(-vds/`kT)+exp((E22-delta_phib)/`kT));
-			fermi_d23 = exp(-vds/`kT)/(exp(-vds/`kT)+exp((E23-delta_phib)/`kT));
-			fermi_d24 = exp(-vds/`kT)/(exp(-vds/`kT)+exp((E24-delta_phib)/`kT));
-			fermi_d25 = exp(-vds/`kT)/(exp(-vds/`kT)+exp((E25-delta_phib)/`kT));
-			fermi_d26 = exp(-vds/`kT)/(exp(-vds/`kT)+exp((E26-delta_phib)/`kT));
-			fermi_d27 = exp(-vds/`kT)/(exp(-vds/`kT)+exp((E27-delta_phib)/`kT));
-			fermi_d28 = exp(-vds/`kT)/(exp(-vds/`kT)+exp((E28-delta_phib)/`kT));
-			fermi_d29 = exp(-vds/`kT)/(exp(-vds/`kT)+exp((E29-delta_phib)/`kT));
+			fermi_d21 = exp_negvds_kt/(exp_negvds_kt+exp_E21_delta_phib_kT);
+			fermi_d22 = exp_negvds_kt/(exp_negvds_kt+exp_E22_delta_phib_kT);
+			fermi_d23 = exp_negvds_kt/(exp_negvds_kt+exp_E23_delta_phib_kT);
+			fermi_d24 = exp_negvds_kt/(exp_negvds_kt+exp_E24_delta_phib_kT);
+			fermi_d25 = exp_negvds_kt/(exp_negvds_kt+exp_E25_delta_phib_kT);
+			fermi_d26 = exp_negvds_kt/(exp_negvds_kt+exp_E26_delta_phib_kT);
+			fermi_d27 = exp_negvds_kt/(exp_negvds_kt+exp_E27_delta_phib_kT);
+			fermi_d28 = exp_negvds_kt/(exp_negvds_kt+exp_E28_delta_phib_kT);
+			fermi_d29 = exp_negvds_kt/(exp_negvds_kt+exp_E29_delta_phib_kT);
 	
 			// Evaluate FDOSXX
-			FDOS11 = (E11-offset)/hspsqrt(abs(hsppow((E11-offset),2)-hsppow(E1,2)))*max(En11-offset,1.0e-14);
-			FDOS12 = (E12-offset)/hspsqrt(abs(hsppow((E12-offset),2)-hsppow(E1,2)))*max(En12-offset,1.0e-14);
-			FDOS13 = (E13-offset)/hspsqrt(abs(hsppow((E13-offset),2)-hsppow(E1,2)))*max(En13-offset,1.0e-14);
-			FDOS14 = (E14-offset)/hspsqrt(abs(hsppow((E14-offset),2)-hsppow(E1,2)))*max(En14-offset,1.0e-14);
-			FDOS15 = (E15-offset)/hspsqrt(abs(hsppow((E15-offset),2)-hsppow(E1,2)))*max(En15-offset,1.0e-14);
-			FDOS16 = (E16-offset)/hspsqrt(abs(hsppow((E16-offset),2)-hsppow(E1,2)))*max(En16-offset,1.0e-14);
-			FDOS17 = (E17-offset)/hspsqrt(abs(hsppow((E17-offset),2)-hsppow(E1,2)))*max(En17-offset,1.0e-14);
-			FDOS18 = (E18-offset)/hspsqrt(abs(hsppow((E18-offset),2)-hsppow(E1,2)))*max(En18-offset,1.0e-14);
-			FDOS19 = (E19-offset)/hspsqrt(abs(hsppow((E19-offset),2)-hsppow(E1,2)))*max(En19-offset,1.0e-14);
+			hsppow_E1_2 = hsppow(E1,2);
+			hsppow_E2_2 = hsppow(E2,2);
+			FDOS11 = (E11-offset)/hspsqrt(abs(hsppow((E11-offset),2)-hsppow_E1_2))*max(En11-offset,1.0e-14);
+			FDOS12 = (E12-offset)/hspsqrt(abs(hsppow((E12-offset),2)-hsppow_E1_2))*max(En12-offset,1.0e-14);
+			FDOS13 = (E13-offset)/hspsqrt(abs(hsppow((E13-offset),2)-hsppow_E1_2))*max(En13-offset,1.0e-14);
+			FDOS14 = (E14-offset)/hspsqrt(abs(hsppow((E14-offset),2)-hsppow_E1_2))*max(En14-offset,1.0e-14);
+			FDOS15 = (E15-offset)/hspsqrt(abs(hsppow((E15-offset),2)-hsppow_E1_2))*max(En15-offset,1.0e-14);
+			FDOS16 = (E16-offset)/hspsqrt(abs(hsppow((E16-offset),2)-hsppow_E1_2))*max(En16-offset,1.0e-14);
+			FDOS17 = (E17-offset)/hspsqrt(abs(hsppow((E17-offset),2)-hsppow_E1_2))*max(En17-offset,1.0e-14);
+			FDOS18 = (E18-offset)/hspsqrt(abs(hsppow((E18-offset),2)-hsppow_E1_2))*max(En18-offset,1.0e-14);
+			FDOS19 = (E19-offset)/hspsqrt(abs(hsppow((E19-offset),2)-hsppow_E1_2))*max(En19-offset,1.0e-14);
 	
-			FDOS21 = (E21-offset)/hspsqrt(abs(hsppow((E21-offset),2)-hsppow(E2,2)))*max(En21-offset,1.0e-14);			
-			FDOS22 = (E22-offset)/hspsqrt(abs(hsppow((E22-offset),2)-hsppow(E2,2)))*max(En22-offset,1.0e-14);
-			FDOS23 = (E23-offset)/hspsqrt(abs(hsppow((E23-offset),2)-hsppow(E2,2)))*max(En23-offset,1.0e-14);
-			FDOS24 = (E24-offset)/hspsqrt(abs(hsppow((E24-offset),2)-hsppow(E2,2)))*max(En24-offset,1.0e-14);
-			FDOS25 = (E25-offset)/hspsqrt(abs(hsppow((E25-offset),2)-hsppow(E2,2)))*max(En25-offset,1.0e-14);
-			FDOS26 = (E26-offset)/hspsqrt(abs(hsppow((E26-offset),2)-hsppow(E2,2)))*max(En26-offset,1.0e-14);
-			FDOS27 = (E27-offset)/hspsqrt(abs(hsppow((E27-offset),2)-hsppow(E2,2)))*max(En27-offset,1.0e-14);
-			FDOS28 = (E28-offset)/hspsqrt(abs(hsppow((E28-offset),2)-hsppow(E2,2)))*max(En28-offset,1.0e-14);
-			FDOS29 = (E29-offset)/hspsqrt(abs(hsppow((E29-offset),2)-hsppow(E2,2)))*max(En29-offset,1.0e-14);
+			FDOS21 = (E21-offset)/hspsqrt(abs(hsppow((E21-offset),2)-hsppow_E2_2))*max(En21-offset,1.0e-14);			
+			FDOS22 = (E22-offset)/hspsqrt(abs(hsppow((E22-offset),2)-hsppow_E2_2))*max(En22-offset,1.0e-14);
+			FDOS23 = (E23-offset)/hspsqrt(abs(hsppow((E23-offset),2)-hsppow_E2_2))*max(En23-offset,1.0e-14);
+			FDOS24 = (E24-offset)/hspsqrt(abs(hsppow((E24-offset),2)-hsppow_E2_2))*max(En24-offset,1.0e-14);
+			FDOS25 = (E25-offset)/hspsqrt(abs(hsppow((E25-offset),2)-hsppow_E2_2))*max(En25-offset,1.0e-14);
+			FDOS26 = (E26-offset)/hspsqrt(abs(hsppow((E26-offset),2)-hsppow_E2_2))*max(En26-offset,1.0e-14);
+			FDOS27 = (E27-offset)/hspsqrt(abs(hsppow((E27-offset),2)-hsppow_E2_2))*max(En27-offset,1.0e-14);
+			FDOS28 = (E28-offset)/hspsqrt(abs(hsppow((E28-offset),2)-hsppow_E2_2))*max(En28-offset,1.0e-14);
+			FDOS29 = (E29-offset)/hspsqrt(abs(hsppow((E29-offset),2)-hsppow_E2_2))*max(En29-offset,1.0e-14);
 			
 			// Evaluate T1X, T2X (with nonzero vds)
 			// Evaluate fermi_opxx
-			fermi_op11 = exp((offset-vds)/`kT)/(exp((offset-vds)/`kT)+exp((E11-delta_phib)/`kT));
-			fermi_op12 = exp((offset-vds)/`kT)/(exp((offset-vds)/`kT)+exp((E12-delta_phib)/`kT));
-			fermi_op13 = exp((offset-vds)/`kT)/(exp((offset-vds)/`kT)+exp((E13-delta_phib)/`kT));
-			fermi_op14 = exp((offset-vds)/`kT)/(exp((offset-vds)/`kT)+exp((E14-delta_phib)/`kT));
-			fermi_op15 = exp((offset-vds)/`kT)/(exp((offset-vds)/`kT)+exp((E15-delta_phib)/`kT));
-			fermi_op16 = exp((offset-vds)/`kT)/(exp((offset-vds)/`kT)+exp((E16-delta_phib)/`kT));
-			fermi_op17 = exp((offset-vds)/`kT)/(exp((offset-vds)/`kT)+exp((E17-delta_phib)/`kT));
-			fermi_op18 = exp((offset-vds)/`kT)/(exp((offset-vds)/`kT)+exp((E18-delta_phib)/`kT));
-			fermi_op19 = exp((offset-vds)/`kT)/(exp((offset-vds)/`kT)+exp((E19-delta_phib)/`kT));
+			exp_offset_vds_kT = exp((offset-vds)/`kT);
+			fermi_op11 = exp_offset_vds_kT/(exp_offset_vds_kT+exp_E11_delta_phib_kT);
+			fermi_op12 = exp_offset_vds_kT/(exp_offset_vds_kT+exp_E12_delta_phib_kT);
+			fermi_op13 = exp_offset_vds_kT/(exp_offset_vds_kT+exp_E13_delta_phib_kT);
+			fermi_op14 = exp_offset_vds_kT/(exp_offset_vds_kT+exp_E14_delta_phib_kT);
+			fermi_op15 = exp_offset_vds_kT/(exp_offset_vds_kT+exp_E15_delta_phib_kT);
+			fermi_op16 = exp_offset_vds_kT/(exp_offset_vds_kT+exp_E16_delta_phib_kT);
+			fermi_op17 = exp_offset_vds_kT/(exp_offset_vds_kT+exp_E17_delta_phib_kT);
+			fermi_op18 = exp_offset_vds_kT/(exp_offset_vds_kT+exp_E18_delta_phib_kT);
+			fermi_op19 = exp_offset_vds_kT/(exp_offset_vds_kT+exp_E19_delta_phib_kT);
 
-			fermi_op21 = exp((offset-vds)/`kT)/(exp((offset-vds)/`kT)+exp((E21-delta_phib)/`kT));
-			fermi_op22 = exp((offset-vds)/`kT)/(exp((offset-vds)/`kT)+exp((E22-delta_phib)/`kT));
-			fermi_op23 = exp((offset-vds)/`kT)/(exp((offset-vds)/`kT)+exp((E23-delta_phib)/`kT));
-			fermi_op24 = exp((offset-vds)/`kT)/(exp((offset-vds)/`kT)+exp((E24-delta_phib)/`kT));
-			fermi_op25 = exp((offset-vds)/`kT)/(exp((offset-vds)/`kT)+exp((E25-delta_phib)/`kT));
-			fermi_op26 = exp((offset-vds)/`kT)/(exp((offset-vds)/`kT)+exp((E26-delta_phib)/`kT));
-			fermi_op27 = exp((offset-vds)/`kT)/(exp((offset-vds)/`kT)+exp((E27-delta_phib)/`kT));
-			fermi_op28 = exp((offset-vds)/`kT)/(exp((offset-vds)/`kT)+exp((E28-delta_phib)/`kT));
-			fermi_op29 = exp((offset-vds)/`kT)/(exp((offset-vds)/`kT)+exp((E29-delta_phib)/`kT));					
+			fermi_op21 = exp_offset_vds_kT/(exp_offset_vds_kT+exp_E21_delta_phib_kT);
+			fermi_op22 = exp_offset_vds_kT/(exp_offset_vds_kT+exp_E22_delta_phib_kT);
+			fermi_op23 = exp_offset_vds_kT/(exp_offset_vds_kT+exp_E23_delta_phib_kT);
+			fermi_op24 = exp_offset_vds_kT/(exp_offset_vds_kT+exp_E24_delta_phib_kT);
+			fermi_op25 = exp_offset_vds_kT/(exp_offset_vds_kT+exp_E25_delta_phib_kT);
+			fermi_op26 = exp_offset_vds_kT/(exp_offset_vds_kT+exp_E26_delta_phib_kT);
+			fermi_op27 = exp_offset_vds_kT/(exp_offset_vds_kT+exp_E27_delta_phib_kT);
+			fermi_op28 = exp_offset_vds_kT/(exp_offset_vds_kT+exp_E28_delta_phib_kT);
+			fermi_op29 = exp_offset_vds_kT/(exp_offset_vds_kT+exp_E29_delta_phib_kT);					
 
 			// Evaluate l_op1x and l_op2x
 			l_op11 = `lambda_op/(FDOS11*(1-fermi_op11));
@@ -505,25 +574,26 @@ module NCNFET_L1(Drain, Gate, Source, Sub, CoupleNode);
 			
 			// Evaluate T1X_0, T2X_0 (with zero vds)
 			// Evaluate fermi_opxx_0 (with zero vds)
-			fermi_op11_0 = exp((offset-0.0)/`kT)/(exp((offset-0.0)/`kT)+exp((E11-delta_phib)/`kT));
-			fermi_op12_0 = exp((offset-0.0)/`kT)/(exp((offset-0.0)/`kT)+exp((E12-delta_phib)/`kT));
-			fermi_op13_0 = exp((offset-0.0)/`kT)/(exp((offset-0.0)/`kT)+exp((E13-delta_phib)/`kT));
-			fermi_op14_0 = exp((offset-0.0)/`kT)/(exp((offset-0.0)/`kT)+exp((E14-delta_phib)/`kT));
-			fermi_op15_0 = exp((offset-0.0)/`kT)/(exp((offset-0.0)/`kT)+exp((E15-delta_phib)/`kT));
-			fermi_op16_0 = exp((offset-0.0)/`kT)/(exp((offset-0.0)/`kT)+exp((E16-delta_phib)/`kT));
-			fermi_op17_0 = exp((offset-0.0)/`kT)/(exp((offset-0.0)/`kT)+exp((E17-delta_phib)/`kT));
-			fermi_op18_0 = exp((offset-0.0)/`kT)/(exp((offset-0.0)/`kT)+exp((E18-delta_phib)/`kT));
-			fermi_op19_0 = exp((offset-0.0)/`kT)/(exp((offset-0.0)/`kT)+exp((E19-delta_phib)/`kT));
+			exp_offset_kT = exp((offset-0.0)/`kT);
+			fermi_op11_0 = exp_offset_kT/(exp_offset_kT+exp_E11_delta_phib_kT);
+			fermi_op12_0 = exp_offset_kT/(exp_offset_kT+exp_E12_delta_phib_kT);
+			fermi_op13_0 = exp_offset_kT/(exp_offset_kT+exp_E13_delta_phib_kT);
+			fermi_op14_0 = exp_offset_kT/(exp_offset_kT+exp_E14_delta_phib_kT);
+			fermi_op15_0 = exp_offset_kT/(exp_offset_kT+exp_E15_delta_phib_kT);
+			fermi_op16_0 = exp_offset_kT/(exp_offset_kT+exp_E16_delta_phib_kT);
+			fermi_op17_0 = exp_offset_kT/(exp_offset_kT+exp_E17_delta_phib_kT);
+			fermi_op18_0 = exp_offset_kT/(exp_offset_kT+exp_E18_delta_phib_kT);
+			fermi_op19_0 = exp_offset_kT/(exp_offset_kT+exp_E19_delta_phib_kT);
 
-			fermi_op21_0 = exp((offset-0.0)/`kT)/(exp((offset-0.0)/`kT)+exp((E21-delta_phib)/`kT));
-			fermi_op22_0 = exp((offset-0.0)/`kT)/(exp((offset-0.0)/`kT)+exp((E22-delta_phib)/`kT));
-			fermi_op23_0 = exp((offset-0.0)/`kT)/(exp((offset-0.0)/`kT)+exp((E23-delta_phib)/`kT));
-			fermi_op24_0 = exp((offset-0.0)/`kT)/(exp((offset-0.0)/`kT)+exp((E24-delta_phib)/`kT));
-			fermi_op25_0 = exp((offset-0.0)/`kT)/(exp((offset-0.0)/`kT)+exp((E25-delta_phib)/`kT));
-			fermi_op26_0 = exp((offset-0.0)/`kT)/(exp((offset-0.0)/`kT)+exp((E26-delta_phib)/`kT));
-			fermi_op27_0 = exp((offset-0.0)/`kT)/(exp((offset-0.0)/`kT)+exp((E27-delta_phib)/`kT));
-			fermi_op28_0 = exp((offset-0.0)/`kT)/(exp((offset-0.0)/`kT)+exp((E28-delta_phib)/`kT));
-			fermi_op29_0 = exp((offset-0.0)/`kT)/(exp((offset-0.0)/`kT)+exp((E29-delta_phib)/`kT));					
+			fermi_op21_0 = exp_offset_kT/(exp_offset_kT+exp_E21_delta_phib_kT);
+			fermi_op22_0 = exp_offset_kT/(exp_offset_kT+exp_E22_delta_phib_kT);
+			fermi_op23_0 = exp_offset_kT/(exp_offset_kT+exp_E23_delta_phib_kT);
+			fermi_op24_0 = exp_offset_kT/(exp_offset_kT+exp_E24_delta_phib_kT);
+			fermi_op25_0 = exp_offset_kT/(exp_offset_kT+exp_E25_delta_phib_kT);
+			fermi_op26_0 = exp_offset_kT/(exp_offset_kT+exp_E26_delta_phib_kT);
+			fermi_op27_0 = exp_offset_kT/(exp_offset_kT+exp_E27_delta_phib_kT);
+			fermi_op28_0 = exp_offset_kT/(exp_offset_kT+exp_E28_delta_phib_kT);
+			fermi_op29_0 = exp_offset_kT/(exp_offset_kT+exp_E29_delta_phib_kT);					
 
 			// Evaluate l_op1x and l_op2x
 			l_op11_0 = `lambda_op/(FDOS11*(1-fermi_op11_0));
@@ -646,26 +716,26 @@ module NCNFET_L1(Drain, Gate, Source, Sub, CoupleNode);
 					
 			// Evaluate trans_c_sub1x, trans_c_sub2x
 			trans_c_sub10=exp((E1-delta_phib)/`kT)/hsppow(1.0+exp((E1-delta_phib)/`kT),2)+exp((E1-delta_phib+vvd-vvs)/`kT)/hsppow(1.0+exp((E1-delta_phib+vvd-vvs)/`kT),2);
-			trans_c_sub11=exp((E11-delta_phib)/`kT)/hsppow(1.0+exp((E11-delta_phib)/`kT),2)+exp((E11-delta_phib+vvd-vvs)/`kT)/hsppow(1.0+exp((E11-delta_phib+vvd-vvs)/`kT),2);
-			trans_c_sub12=exp((E12-delta_phib)/`kT)/hsppow(1.0+exp((E12-delta_phib)/`kT),2)+exp((E12-delta_phib+vvd-vvs)/`kT)/hsppow(1.0+exp((E12-delta_phib+vvd-vvs)/`kT),2);
-			trans_c_sub13=exp((E13-delta_phib)/`kT)/hsppow(1.0+exp((E13-delta_phib)/`kT),2)+exp((E13-delta_phib+vvd-vvs)/`kT)/hsppow(1.0+exp((E13-delta_phib+vvd-vvs)/`kT),2);
-			trans_c_sub14=exp((E14-delta_phib)/`kT)/hsppow(1.0+exp((E14-delta_phib)/`kT),2)+exp((E14-delta_phib+vvd-vvs)/`kT)/hsppow(1.0+exp((E14-delta_phib+vvd-vvs)/`kT),2);
-			trans_c_sub15=exp((E15-delta_phib)/`kT)/hsppow(1.0+exp((E15-delta_phib)/`kT),2)+exp((E15-delta_phib+vvd-vvs)/`kT)/hsppow(1.0+exp((E15-delta_phib+vvd-vvs)/`kT),2);
-			trans_c_sub16=exp((E16-delta_phib)/`kT)/hsppow(1.0+exp((E16-delta_phib)/`kT),2)+exp((E16-delta_phib+vvd-vvs)/`kT)/hsppow(1.0+exp((E16-delta_phib+vvd-vvs)/`kT),2);
-			trans_c_sub17=exp((E17-delta_phib)/`kT)/hsppow(1.0+exp((E17-delta_phib)/`kT),2)+exp((E17-delta_phib+vvd-vvs)/`kT)/hsppow(1.0+exp((E17-delta_phib+vvd-vvs)/`kT),2);
-			trans_c_sub18=exp((E18-delta_phib)/`kT)/hsppow(1.0+exp((E18-delta_phib)/`kT),2)+exp((E18-delta_phib+vvd-vvs)/`kT)/hsppow(1.0+exp((E18-delta_phib+vvd-vvs)/`kT),2);
-			trans_c_sub19=exp((E19-delta_phib)/`kT)/hsppow(1.0+exp((E19-delta_phib)/`kT),2)+exp((E19-delta_phib+vvd-vvs)/`kT)/hsppow(1.0+exp((E19-delta_phib+vvd-vvs)/`kT),2);
+			trans_c_sub11=exp_E11_delta_phib_kT/hsppow(1.0+exp_E11_delta_phib_kT,2)+exp((E11-delta_phib+vvd-vvs)/`kT)/hsppow(1.0+exp((E11-delta_phib+vvd-vvs)/`kT),2);
+			trans_c_sub12=exp_E12_delta_phib_kT/hsppow(1.0+exp_E12_delta_phib_kT,2)+exp((E12-delta_phib+vvd-vvs)/`kT)/hsppow(1.0+exp((E12-delta_phib+vvd-vvs)/`kT),2);
+			trans_c_sub13=exp_E13_delta_phib_kT/hsppow(1.0+exp_E13_delta_phib_kT,2)+exp((E13-delta_phib+vvd-vvs)/`kT)/hsppow(1.0+exp((E13-delta_phib+vvd-vvs)/`kT),2);
+			trans_c_sub14=exp_E14_delta_phib_kT/hsppow(1.0+exp_E14_delta_phib_kT,2)+exp((E14-delta_phib+vvd-vvs)/`kT)/hsppow(1.0+exp((E14-delta_phib+vvd-vvs)/`kT),2);
+			trans_c_sub15=exp_E15_delta_phib_kT/hsppow(1.0+exp_E15_delta_phib_kT,2)+exp((E15-delta_phib+vvd-vvs)/`kT)/hsppow(1.0+exp((E15-delta_phib+vvd-vvs)/`kT),2);
+			trans_c_sub16=exp_E16_delta_phib_kT/hsppow(1.0+exp_E16_delta_phib_kT,2)+exp((E16-delta_phib+vvd-vvs)/`kT)/hsppow(1.0+exp((E16-delta_phib+vvd-vvs)/`kT),2);
+			trans_c_sub17=exp_E17_delta_phib_kT/hsppow(1.0+exp_E17_delta_phib_kT,2)+exp((E17-delta_phib+vvd-vvs)/`kT)/hsppow(1.0+exp((E17-delta_phib+vvd-vvs)/`kT),2);
+			trans_c_sub18=exp_E18_delta_phib_kT/hsppow(1.0+exp_E18_delta_phib_kT,2)+exp((E18-delta_phib+vvd-vvs)/`kT)/hsppow(1.0+exp((E18-delta_phib+vvd-vvs)/`kT),2);
+			trans_c_sub19=exp_E19_delta_phib_kT/hsppow(1.0+exp_E19_delta_phib_kT,2)+exp((E19-delta_phib+vvd-vvs)/`kT)/hsppow(1.0+exp((E19-delta_phib+vvd-vvs)/`kT),2);
 			
 			trans_c_sub20=exp((E2-delta_phib)/`kT)/hsppow(1.0+exp((E2-delta_phib)/`kT),2)+exp((E2-delta_phib+vvd-vvs)/`kT)/hsppow(1.0+exp((E2-delta_phib+vvd-vvs)/`kT),2);
-			trans_c_sub21=exp((E21-delta_phib)/`kT)/hsppow(1.0+exp((E21-delta_phib)/`kT),2)+exp((E21-delta_phib+vvd-vvs)/`kT)/hsppow(1.0+exp((E21-delta_phib+vvd-vvs)/`kT),2);
-			trans_c_sub22=exp((E22-delta_phib)/`kT)/hsppow(1.0+exp((E22-delta_phib)/`kT),2)+exp((E22-delta_phib+vvd-vvs)/`kT)/hsppow(1.0+exp((E22-delta_phib+vvd-vvs)/`kT),2);
-			trans_c_sub23=exp((E23-delta_phib)/`kT)/hsppow(1.0+exp((E23-delta_phib)/`kT),2)+exp((E23-delta_phib+vvd-vvs)/`kT)/hsppow(1.0+exp((E23-delta_phib+vvd-vvs)/`kT),2);
-			trans_c_sub24=exp((E24-delta_phib)/`kT)/hsppow(1.0+exp((E24-delta_phib)/`kT),2)+exp((E24-delta_phib+vvd-vvs)/`kT)/hsppow(1.0+exp((E24-delta_phib+vvd-vvs)/`kT),2);
-			trans_c_sub25=exp((E25-delta_phib)/`kT)/hsppow(1.0+exp((E25-delta_phib)/`kT),2)+exp((E25-delta_phib+vvd-vvs)/`kT)/hsppow(1.0+exp((E25-delta_phib+vvd-vvs)/`kT),2);
-			trans_c_sub26=exp((E26-delta_phib)/`kT)/hsppow(1.0+exp((E26-delta_phib)/`kT),2)+exp((E26-delta_phib+vvd-vvs)/`kT)/hsppow(1.0+exp((E26-delta_phib+vvd-vvs)/`kT),2);
-			trans_c_sub27=exp((E27-delta_phib)/`kT)/hsppow(1.0+exp((E27-delta_phib)/`kT),2)+exp((E27-delta_phib+vvd-vvs)/`kT)/hsppow(1.0+exp((E27-delta_phib+vvd-vvs)/`kT),2);						
-			trans_c_sub28=exp((E28-delta_phib)/`kT)/hsppow(1.0+exp((E28-delta_phib)/`kT),2)+exp((E28-delta_phib+vvd-vvs)/`kT)/hsppow(1.0+exp((E28-delta_phib+vvd-vvs)/`kT),2);
-			trans_c_sub29=exp((E29-delta_phib)/`kT)/hsppow(1.0+exp((E29-delta_phib)/`kT),2)+exp((E29-delta_phib+vvd-vvs)/`kT)/hsppow(1.0+exp((E29-delta_phib+vvd-vvs)/`kT),2);
+			trans_c_sub21=exp_E21_delta_phib_kT/hsppow(1.0+exp_E21_delta_phib_kT,2)+exp((E21-delta_phib+vvd-vvs)/`kT)/hsppow(1.0+exp((E21-delta_phib+vvd-vvs)/`kT),2);
+			trans_c_sub22=exp_E22_delta_phib_kT/hsppow(1.0+exp_E22_delta_phib_kT,2)+exp((E22-delta_phib+vvd-vvs)/`kT)/hsppow(1.0+exp((E22-delta_phib+vvd-vvs)/`kT),2);
+			trans_c_sub23=exp_E23_delta_phib_kT/hsppow(1.0+exp_E23_delta_phib_kT,2)+exp((E23-delta_phib+vvd-vvs)/`kT)/hsppow(1.0+exp((E23-delta_phib+vvd-vvs)/`kT),2);
+			trans_c_sub24=exp_E24_delta_phib_kT/hsppow(1.0+exp_E24_delta_phib_kT,2)+exp((E24-delta_phib+vvd-vvs)/`kT)/hsppow(1.0+exp((E24-delta_phib+vvd-vvs)/`kT),2);
+			trans_c_sub25=exp_E25_delta_phib_kT/hsppow(1.0+exp_E25_delta_phib_kT,2)+exp((E25-delta_phib+vvd-vvs)/`kT)/hsppow(1.0+exp((E25-delta_phib+vvd-vvs)/`kT),2);
+			trans_c_sub26=exp_E26_delta_phib_kT/hsppow(1.0+exp_E26_delta_phib_kT,2)+exp((E26-delta_phib+vvd-vvs)/`kT)/hsppow(1.0+exp((E26-delta_phib+vvd-vvs)/`kT),2);
+			trans_c_sub27=exp_E27_delta_phib_kT/hsppow(1.0+exp_E27_delta_phib_kT,2)+exp((E27-delta_phib+vvd-vvs)/`kT)/hsppow(1.0+exp((E27-delta_phib+vvd-vvs)/`kT),2);						
+			trans_c_sub28=exp_E28_delta_phib_kT/hsppow(1.0+exp_E28_delta_phib_kT,2)+exp((E28-delta_phib+vvd-vvs)/`kT)/hsppow(1.0+exp((E28-delta_phib+vvd-vvs)/`kT),2);
+			trans_c_sub29=exp_E29_delta_phib_kT/hsppow(1.0+exp_E29_delta_phib_kT,2)+exp((E29-delta_phib+vvd-vvs)/`kT)/hsppow(1.0+exp((E29-delta_phib+vvd-vvs)/`kT),2);
 
 
 			// Evaluate trans_charge_1, trans_charge_2
@@ -778,48 +848,48 @@ module NCNFET_L1(Drain, Gate, Source, Sub, CoupleNode);
 			
 			// Evaluate Qs_sub1x, Qs_sub2x
 			Qs_sub10 = 1.0/(1+exp((E1-delta_phib)/`kT));
-			Qs_sub11 = 1.0/(1+exp((E11-delta_phib)/`kT));
-			Qs_sub12 = 1.0/(1+exp((E12-delta_phib)/`kT));
-			Qs_sub13 = 1.0/(1+exp((E13-delta_phib)/`kT));
-			Qs_sub14 = 1.0/(1+exp((E14-delta_phib)/`kT));
-			Qs_sub15 = 1.0/(1+exp((E15-delta_phib)/`kT));
+			Qs_sub11 = 1.0/(1+exp_E11_delta_phib_kT);
+			Qs_sub12 = 1.0/(1+exp_E12_delta_phib_kT);
+			Qs_sub13 = 1.0/(1+exp_E13_delta_phib_kT);
+			Qs_sub14 = 1.0/(1+exp_E14_delta_phib_kT);
+			Qs_sub15 = 1.0/(1+exp_E15_delta_phib_kT);
 			
 			Qs_sub20 = 1.0/(1+exp((E2-delta_phib)/`kT));
-			Qs_sub21 = 1.0/(1+exp((E21-delta_phib)/`kT));
-			Qs_sub22 = 1.0/(1+exp((E22-delta_phib)/`kT));
-			Qs_sub23 = 1.0/(1+exp((E23-delta_phib)/`kT));
-			Qs_sub24 = 1.0/(1+exp((E24-delta_phib)/`kT));
-			Qs_sub25 = 1.0/(1+exp((E25-delta_phib)/`kT));
+			Qs_sub21 = 1.0/(1+exp_E21_delta_phib_kT);
+			Qs_sub22 = 1.0/(1+exp_E22_delta_phib_kT);
+			Qs_sub23 = 1.0/(1+exp_E23_delta_phib_kT);
+			Qs_sub24 = 1.0/(1+exp_E24_delta_phib_kT);
+			Qs_sub25 = 1.0/(1+exp_E25_delta_phib_kT);
 			
 			// Evaluate FDOS_d1x, FDOS_d2x
-			FDOS_d10=(E1+E1+vds-delta_phib-offset)/hspsqrt(abs(hsppow((E1+E1+vds-delta_phib-offset),2)-hsppow(E1,2)))*max(E1+vds-delta_phib-offset,1.0e-14);
-			FDOS_d11=(E11+E1+vds-delta_phib-offset)/hspsqrt(abs(hsppow((E11+E1+vds-delta_phib-offset),2)-hsppow(E1,2)))*max(E11+vds-delta_phib-offset,1.0e-14);
-			FDOS_d12=(E12+E1+vds-delta_phib-offset)/hspsqrt(abs(hsppow((E12+E1+vds-delta_phib-offset),2)-hsppow(E1,2)))*max(E12+vds-delta_phib-offset,1.0e-14);
-			FDOS_d13=(E13+E1+vds-delta_phib-offset)/hspsqrt(abs(hsppow((E13+E1+vds-delta_phib-offset),2)-hsppow(E1,2)))*max(E13+vds-delta_phib-offset,1.0e-14);
-			FDOS_d14=(E14+E1+vds-delta_phib-offset)/hspsqrt(abs(hsppow((E14+E1+vds-delta_phib-offset),2)-hsppow(E1,2)))*max(E14+vds-delta_phib-offset,1.0e-14);
-			FDOS_d15=(E15+E1+vds-delta_phib-offset)/hspsqrt(abs(hsppow((E15+E1+vds-delta_phib-offset),2)-hsppow(E1,2)))*max(E15+vds-delta_phib-offset,1.0e-14);
+			FDOS_d10=(E1+E1+vds-delta_phib-offset)/hspsqrt(abs(hsppow((E1+E1+vds-delta_phib-offset),2)-hsppow_E1_2))*max(E1+vds-delta_phib-offset,1.0e-14);
+			FDOS_d11=(E11+E1+vds-delta_phib-offset)/hspsqrt(abs(hsppow((E11+E1+vds-delta_phib-offset),2)-hsppow_E1_2))*max(E11+vds-delta_phib-offset,1.0e-14);
+			FDOS_d12=(E12+E1+vds-delta_phib-offset)/hspsqrt(abs(hsppow((E12+E1+vds-delta_phib-offset),2)-hsppow_E1_2))*max(E12+vds-delta_phib-offset,1.0e-14);
+			FDOS_d13=(E13+E1+vds-delta_phib-offset)/hspsqrt(abs(hsppow((E13+E1+vds-delta_phib-offset),2)-hsppow_E1_2))*max(E13+vds-delta_phib-offset,1.0e-14);
+			FDOS_d14=(E14+E1+vds-delta_phib-offset)/hspsqrt(abs(hsppow((E14+E1+vds-delta_phib-offset),2)-hsppow_E1_2))*max(E14+vds-delta_phib-offset,1.0e-14);
+			FDOS_d15=(E15+E1+vds-delta_phib-offset)/hspsqrt(abs(hsppow((E15+E1+vds-delta_phib-offset),2)-hsppow_E1_2))*max(E15+vds-delta_phib-offset,1.0e-14);
 			
-			FDOS_d20=(E2+E2+vds-delta_phib-offset)/hspsqrt(abs(hsppow((E2+E2+vds-delta_phib-offset),2)-hsppow(E2,2)))*max(E2+vds-delta_phib-offset,1.0e-14);
-			FDOS_d21=(E21+E2+vds-delta_phib-offset)/hspsqrt(abs(hsppow((E21+E2+vds-delta_phib-offset),2)-hsppow(E2,2)))*max(E21+vds-delta_phib-offset,1.0e-14);
-			FDOS_d22=(E22+E2+vds-delta_phib-offset)/hspsqrt(abs(hsppow((E22+E2+vds-delta_phib-offset),2)-hsppow(E2,2)))*max(E22+vds-delta_phib-offset,1.0e-14);
-			FDOS_d23=(E23+E2+vds-delta_phib-offset)/hspsqrt(abs(hsppow((E23+E2+vds-delta_phib-offset),2)-hsppow(E2,2)))*max(E23+vds-delta_phib-offset,1.0e-14);
-			FDOS_d24=(E24+E2+vds-delta_phib-offset)/hspsqrt(abs(hsppow((E24+E2+vds-delta_phib-offset),2)-hsppow(E2,2)))*max(E24+vds-delta_phib-offset,1.0e-14);
-			FDOS_d25=(E25+E2+vds-delta_phib-offset)/hspsqrt(abs(hsppow((E25+E2+vds-delta_phib-offset),2)-hsppow(E2,2)))*max(E25+vds-delta_phib-offset,1.0e-14);
+			FDOS_d20=(E2+E2+vds-delta_phib-offset)/hspsqrt(abs(hsppow((E2+E2+vds-delta_phib-offset),2)-hsppow_E2_2))*max(E2+vds-delta_phib-offset,1.0e-14);
+			FDOS_d21=(E21+E2+vds-delta_phib-offset)/hspsqrt(abs(hsppow((E21+E2+vds-delta_phib-offset),2)-hsppow_E2_2))*max(E21+vds-delta_phib-offset,1.0e-14);
+			FDOS_d22=(E22+E2+vds-delta_phib-offset)/hspsqrt(abs(hsppow((E22+E2+vds-delta_phib-offset),2)-hsppow_E2_2))*max(E22+vds-delta_phib-offset,1.0e-14);
+			FDOS_d23=(E23+E2+vds-delta_phib-offset)/hspsqrt(abs(hsppow((E23+E2+vds-delta_phib-offset),2)-hsppow_E2_2))*max(E23+vds-delta_phib-offset,1.0e-14);
+			FDOS_d24=(E24+E2+vds-delta_phib-offset)/hspsqrt(abs(hsppow((E24+E2+vds-delta_phib-offset),2)-hsppow_E2_2))*max(E24+vds-delta_phib-offset,1.0e-14);
+			FDOS_d25=(E25+E2+vds-delta_phib-offset)/hspsqrt(abs(hsppow((E25+E2+vds-delta_phib-offset),2)-hsppow_E2_2))*max(E25+vds-delta_phib-offset,1.0e-14);
 			
 			// Evaluate fermi_op1x, fermi_op2x
-			fermi_op10=exp((offset-vds)/`kT)/(exp((offset-vds)/`kT)+exp((E1-delta_phib)/`kT));
-			fermi_op11=exp((offset-vds)/`kT)/(exp((offset-vds)/`kT)+exp((E11-delta_phib)/`kT));
-			fermi_op12=exp((offset-vds)/`kT)/(exp((offset-vds)/`kT)+exp((E12-delta_phib)/`kT));
-			fermi_op13=exp((offset-vds)/`kT)/(exp((offset-vds)/`kT)+exp((E13-delta_phib)/`kT));
-			fermi_op14=exp((offset-vds)/`kT)/(exp((offset-vds)/`kT)+exp((E14-delta_phib)/`kT));
-			fermi_op15=exp((offset-vds)/`kT)/(exp((offset-vds)/`kT)+exp((E15-delta_phib)/`kT));
+			fermi_op10=exp_offset_vds_kT/(exp_offset_vds_kT+exp((E1-delta_phib)/`kT));
+			fermi_op11=exp_offset_vds_kT/(exp_offset_vds_kT+exp_E11_delta_phib_kT);
+			fermi_op12=exp_offset_vds_kT/(exp_offset_vds_kT+exp_E12_delta_phib_kT);
+			fermi_op13=exp_offset_vds_kT/(exp_offset_vds_kT+exp_E13_delta_phib_kT);
+			fermi_op14=exp_offset_vds_kT/(exp_offset_vds_kT+exp_E14_delta_phib_kT);
+			fermi_op15=exp_offset_vds_kT/(exp_offset_vds_kT+exp_E15_delta_phib_kT);
 			
-			fermi_op20=exp((offset-vds)/`kT)/(exp((offset-vds)/`kT)+exp((E2-delta_phib)/`kT));
-			fermi_op21=exp((offset-vds)/`kT)/(exp((offset-vds)/`kT)+exp((E21-delta_phib)/`kT));
-			fermi_op22=exp((offset-vds)/`kT)/(exp((offset-vds)/`kT)+exp((E22-delta_phib)/`kT));
-			fermi_op23=exp((offset-vds)/`kT)/(exp((offset-vds)/`kT)+exp((E23-delta_phib)/`kT));
-			fermi_op24=exp((offset-vds)/`kT)/(exp((offset-vds)/`kT)+exp((E24-delta_phib)/`kT));
-			fermi_op25=exp((offset-vds)/`kT)/(exp((offset-vds)/`kT)+exp((E25-delta_phib)/`kT));
+			fermi_op20=exp_offset_vds_kT/(exp_offset_vds_kT+exp((E2-delta_phib)/`kT));
+			fermi_op21=exp_offset_vds_kT/(exp_offset_vds_kT+exp_E21_delta_phib_kT);
+			fermi_op22=exp_offset_vds_kT/(exp_offset_vds_kT+exp_E22_delta_phib_kT);
+			fermi_op23=exp_offset_vds_kT/(exp_offset_vds_kT+exp_E23_delta_phib_kT);
+			fermi_op24=exp_offset_vds_kT/(exp_offset_vds_kT+exp_E24_delta_phib_kT);
+			fermi_op25=exp_offset_vds_kT/(exp_offset_vds_kT+exp_E25_delta_phib_kT);
 			
 			// Evaluate ld_op1x, ld_op2x
 			ld_op10=`lambda_op/(FDOS_d10*(1-fermi_op10));
@@ -916,26 +986,26 @@ module NCNFET_L1(Drain, Gate, Source, Sub, CoupleNode);
 
 			// Evaluate charge_sub_1x, charge_sub_2x
 			charge_sub10 = 1.0/(1.0+exp((E1-delta_phib)/`kT))+1.0/(1.0+exp((E1-delta_phib+(vvd-vvs))/`kT));			
-			charge_sub11 = 1.0/(1.0+exp((E11-delta_phib)/`kT))+1.0/(1.0+exp((E11-delta_phib+(vvd-vvs))/`kT));		
-			charge_sub12 = 1.0/(1.0+exp((E12-delta_phib)/`kT))+1.0/(1.0+exp((E12-delta_phib+(vvd-vvs))/`kT));			
-			charge_sub13 = 1.0/(1.0+exp((E13-delta_phib)/`kT))+1.0/(1.0+exp((E13-delta_phib+(vvd-vvs))/`kT));			
-			charge_sub14 = 1.0/(1.0+exp((E14-delta_phib)/`kT))+1.0/(1.0+exp((E14-delta_phib+(vvd-vvs))/`kT));			
-			charge_sub15 = 1.0/(1.0+exp((E15-delta_phib)/`kT))+1.0/(1.0+exp((E15-delta_phib+(vvd-vvs))/`kT));		
-			charge_sub16 = 1.0/(1.0+exp((E16-delta_phib)/`kT))+1.0/(1.0+exp((E16-delta_phib+(vvd-vvs))/`kT));			
-			charge_sub17 = 1.0/(1.0+exp((E17-delta_phib)/`kT))+1.0/(1.0+exp((E17-delta_phib+(vvd-vvs))/`kT));
-			charge_sub18 = 1.0/(1.0+exp((E18-delta_phib)/`kT))+1.0/(1.0+exp((E18-delta_phib+(vvd-vvs))/`kT));
-			charge_sub19 = 1.0/(1.0+exp((E19-delta_phib)/`kT))+1.0/(1.0+exp((E19-delta_phib+(vvd-vvs))/`kT));
+			charge_sub11 = 1.0/(1.0+exp_E11_delta_phib_kT)+1.0/(1.0+exp((E11-delta_phib+(vvd-vvs))/`kT));		
+			charge_sub12 = 1.0/(1.0+exp_E12_delta_phib_kT)+1.0/(1.0+exp((E12-delta_phib+(vvd-vvs))/`kT));			
+			charge_sub13 = 1.0/(1.0+exp_E13_delta_phib_kT)+1.0/(1.0+exp((E13-delta_phib+(vvd-vvs))/`kT));			
+			charge_sub14 = 1.0/(1.0+exp_E14_delta_phib_kT)+1.0/(1.0+exp((E14-delta_phib+(vvd-vvs))/`kT));			
+			charge_sub15 = 1.0/(1.0+exp_E15_delta_phib_kT)+1.0/(1.0+exp((E15-delta_phib+(vvd-vvs))/`kT));		
+			charge_sub16 = 1.0/(1.0+exp_E16_delta_phib_kT)+1.0/(1.0+exp((E16-delta_phib+(vvd-vvs))/`kT));			
+			charge_sub17 = 1.0/(1.0+exp_E17_delta_phib_kT)+1.0/(1.0+exp((E17-delta_phib+(vvd-vvs))/`kT));
+			charge_sub18 = 1.0/(1.0+exp_E18_delta_phib_kT)+1.0/(1.0+exp((E18-delta_phib+(vvd-vvs))/`kT));
+			charge_sub19 = 1.0/(1.0+exp_E19_delta_phib_kT)+1.0/(1.0+exp((E19-delta_phib+(vvd-vvs))/`kT));
 
 			charge_sub20 = 1.0/(1.0+exp((E2-delta_phib)/`kT))+1.0/(1.0+exp((E2-delta_phib+(vvd-vvs))/`kT));			
-			charge_sub21 = 1.0/(1.0+exp((E21-delta_phib)/`kT))+1.0/(1.0+exp((E21-delta_phib+(vvd-vvs))/`kT));			
-			charge_sub22 = 1.0/(1.0+exp((E22-delta_phib)/`kT))+1.0/(1.0+exp((E22-delta_phib+(vvd-vvs))/`kT));
-			charge_sub23 = 1.0/(1.0+exp((E23-delta_phib)/`kT))+1.0/(1.0+exp((E23-delta_phib+(vvd-vvs))/`kT));		
-			charge_sub24 = 1.0/(1.0+exp((E24-delta_phib)/`kT))+1.0/(1.0+exp((E24-delta_phib+(vvd-vvs))/`kT));			
-			charge_sub25 = 1.0/(1.0+exp((E25-delta_phib)/`kT))+1.0/(1.0+exp((E25-delta_phib+(vvd-vvs))/`kT));			
-			charge_sub26 = 1.0/(1.0+exp((E26-delta_phib)/`kT))+1.0/(1.0+exp((E26-delta_phib+(vvd-vvs))/`kT));			
-			charge_sub27 = 1.0/(1.0+exp((E27-delta_phib)/`kT))+1.0/(1.0+exp((E27-delta_phib+(vvd-vvs))/`kT));
-			charge_sub28 = 1.0/(1.0+exp((E28-delta_phib)/`kT))+1.0/(1.0+exp((E28-delta_phib+(vvd-vvs))/`kT));
-			charge_sub29 = 1.0/(1.0+exp((E29-delta_phib)/`kT))+1.0/(1.0+exp((E29-delta_phib+(vvd-vvs))/`kT));
+			charge_sub21 = 1.0/(1.0+exp_E21_delta_phib_kT)+1.0/(1.0+exp((E21-delta_phib+(vvd-vvs))/`kT));			
+			charge_sub22 = 1.0/(1.0+exp_E22_delta_phib_kT)+1.0/(1.0+exp((E22-delta_phib+(vvd-vvs))/`kT));
+			charge_sub23 = 1.0/(1.0+exp_E23_delta_phib_kT)+1.0/(1.0+exp((E23-delta_phib+(vvd-vvs))/`kT));		
+			charge_sub24 = 1.0/(1.0+exp_E24_delta_phib_kT)+1.0/(1.0+exp((E24-delta_phib+(vvd-vvs))/`kT));			
+			charge_sub25 = 1.0/(1.0+exp_E25_delta_phib_kT)+1.0/(1.0+exp((E25-delta_phib+(vvd-vvs))/`kT));			
+			charge_sub26 = 1.0/(1.0+exp_E26_delta_phib_kT)+1.0/(1.0+exp((E26-delta_phib+(vvd-vvs))/`kT));			
+			charge_sub27 = 1.0/(1.0+exp_E27_delta_phib_kT)+1.0/(1.0+exp((E27-delta_phib+(vvd-vvs))/`kT));
+			charge_sub28 = 1.0/(1.0+exp_E28_delta_phib_kT)+1.0/(1.0+exp((E28-delta_phib+(vvd-vvs))/`kT));
+			charge_sub29 = 1.0/(1.0+exp_E29_delta_phib_kT)+1.0/(1.0+exp((E29-delta_phib+(vvd-vvs))/`kT));
 
 			// charge_sub_1, charge_sub_2
 			charge_sub_1 = charge_sub10+charge_sub11+charge_sub12+charge_sub13+charge_sub14+charge_sub15+charge_sub16+charge_sub17+charge_sub18+charge_sub19; 			
