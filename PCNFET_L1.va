@@ -464,7 +464,7 @@ module PCNFET_L1(Drain, Gate, Source, Sub, CoupleNode);
 			fermi_s28 = 1.0/(1.0+exp_E28_delta_phib_kT);
 			fermi_s29 = 1.0/(1.0+exp_E29_delta_phib_kT);
 
-			exp_negvds_kt = exp(-vds/`kT;
+			exp_negvds_kt = exp(-vds/`kT);
 			fermi_d11 = exp_negvds_kt/(exp_negvds_kt+exp_E11_delta_phib_kT);
 			fermi_d12 = exp_negvds_kt/(exp_negvds_kt+exp_E12_delta_phib_kT);
 			fermi_d13 = exp_negvds_kt/(exp_negvds_kt+exp_E13_delta_phib_kT);
